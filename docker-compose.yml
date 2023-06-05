@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  caddy:
+    image: caddy:latest
+    restart: always
+    ports:
+      - 80:80  # Décommentez cette ligne si vous souhaitez exposer le port 80 sur votre machine hôte
+      - 443:443 # Décommentez cette ligne si vous souhaitez exposer le port 443 sur votre machine hôte
+    volumes:
+      - ./docker/Caddy/Caddyfile:/etc/caddy/Caddyfile  # Montez votre fichier Caddyfile personnalisé ici
+      - ./:/srv  
+    networks:
+      - app-network
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./docker/php/Dockerfile
+    restart: always
+    volumes:
+      - ./:/srv
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
